@@ -2,7 +2,7 @@
 
 echo "Build the docker"
 
-docker build . -t docker.io/richpauloo/tdox:prod.0.0.01
+docker buildx build --platform linux/amd64 . -t docker.io/richpauloo/tdox:prod.0.0.01
 
 # if [[ the last exit code $? indicates a successful 0 build, then
 if [[ $? = 0 ]] ; then
