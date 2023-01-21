@@ -15,9 +15,24 @@ jobs:
     container:
      image: docker.io/richpauloo/tdox:prod.0.0.01
     steps:
-      - name: checkout_repo
+      - name: (1) Checkout Repo
         uses: actions/checkout@v3
         with:
           ref: 'main'
-      - name: Run workflow
-        run: bash ./R/run.sh  
+      - name: (2) Download and plot
+        run: |
+          source('R/01_download_plot.R')
+        shell: Rscript {0} 
+      - name: (3) GitHub Action for committing changes to a repository
+        uses: devops-infra/action-commit-push@v0.9.2
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          commit_prefix: "[AUTO-COMMIT] update daily plot"
+      - name: (4) Send Text Message
+        run: |
+          source('R/02_message.R')
+        shell: Rscript {0} 
+      - name: (5) Session info
+        run: |
+          sessionInfo()
+        shell: Rscript {0}
