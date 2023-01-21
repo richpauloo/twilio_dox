@@ -17,6 +17,8 @@ jobs:
         uses: actions/checkout@v3
         with:
           ref: 'main'
+      - name: Fix git safe.directory in container
+        run: mkdir -p /home/runner/work/_temp/_github_home && printf "[safe]\n\tdirectory = /github/workspace" > /home/runner/work/_temp/_github_home/.gitconfig
       - name: (2) Download and plot
         run: |
           source('R/01_download_plot.R')
