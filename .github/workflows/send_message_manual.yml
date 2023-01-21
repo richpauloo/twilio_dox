@@ -13,9 +13,27 @@ jobs:
     container:
      image: docker.io/richpauloo/tdox:prod.0.0.01
     steps:
-      - name: checkout_repo
+      - name: (1) Checkout Repo
         uses: actions/checkout@v3
         with:
           ref: 'main'
-      - name: Run workflow
-        run: bash ./R/run.sh  
+      - name: (2) Download and plot
+        run: |
+          source('R/01_download_plot.R')
+        shell: Rscript {0} 
+      - name: (3) setup git config
+        run: |
+          # setup the username and email. I tend to use 'GitHub Actions Bot' with no email by default
+          git config user.name "GitHub Actions Bot"
+          git config user.email "<>"
+      - name: (4) Commit
+        run: |
+          # Stage the file, commit and push
+          git add --all
+          git commit -m "auto update daily plot"
+          git push 
+      - name: (5) Send Text Message
+        run: |
+          source('R/01_download_plot.R')
+        shell: Rscript {0} 
+       

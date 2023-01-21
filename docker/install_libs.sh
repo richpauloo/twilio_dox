@@ -26,4 +26,6 @@ function apt_install() {
     fi
 }
 
-apt_install libxml2-dev
+apt_install \
+  libxml2-dev \
+  libxt6
