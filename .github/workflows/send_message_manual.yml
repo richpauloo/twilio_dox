@@ -21,16 +21,16 @@ jobs:
         run: |
           source('R/01_download_plot.R')
         shell: Rscript {0} 
-      - name: GitHub Action for committing changes to a repository
+      - name: (3) GitHub Action for committing changes to a repository
         uses: devops-infra/action-commit-push@v0.9.2
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          commit_prefix: "[AUTO-COMMIT] foo/bar replace"
-      - name: (5) Send Text Message
+          commit_prefix: "[AUTO-COMMIT] update daily plot"
+      - name: (4) Send Text Message
         run: |
           source('R/02_message.R')
         shell: Rscript {0} 
-      - name: (6) Session info
+      - name: (5) Session info
         run: |
           sessionInfo()
         shell: Rscript {0}
