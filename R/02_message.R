@@ -19,3 +19,4 @@ tw_send_message(
   to        = tw_target_number,
   media_url = url_img
 )
+cat("Sent plot via text message\n")

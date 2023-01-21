@@ -5,6 +5,7 @@ library(dplyr)
 
 # tomorrow's date for the API query
 today <- Sys.Date() + 1
+cat("Running query for", today, "and 72 hrs prior.\n")
 
 # url prefix and suffix - works for this simple, single endpoint use case
 # hard codes the sensor number (61) and duration (96 hrs)
@@ -24,6 +25,8 @@ df <- read_html(url) %>%
   setNames(c("t", "do")) %>% 
   filter(do != "--") %>% 
   mutate(t = mdy_hm(t), do = as.numeric(do)) 
+cat("Downloaded", nrow(df), "rows of data.\n")
+
 
 # caption for ggplot
 caption <- paste(
@@ -45,5 +48,7 @@ p <- ggplot(df, aes(t, do)) +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) 
 
+cat("Default wd is:", getwd(), "\n")
 path_out <- paste0("png/", Sys.Date(), ".png")
 ggsave(path_out, p, height = 5, width = 7)
+cat("Saved plot to", path_out, "\n")
