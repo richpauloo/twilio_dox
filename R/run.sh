@@ -7,7 +7,7 @@ echo "Commiting plot to Github"
 if [[ "$(git status --porcelain)" != "" ]]; then
     git config --global user.name 'richpauloo'
     git config --global user.email 'richpauloo@gmail.com'
-    git config --global --add safe.directory /__w/twilio_dox/twilio_dox
+    git config --global safe.directory '*'
     git add --all
     git commit -m "Auto update daily plot"
     git push
