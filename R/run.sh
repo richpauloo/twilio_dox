@@ -5,7 +5,7 @@
 
 echo "Commiting plot to Github"
 if [[ "$(git status --porcelain)" != "" ]]; then
-    git config --global user.name 'RichPauloo'
+    git config --global user.name 'richpauloo'
     git config --global user.email 'richpauloo@gmail.com'
     git config --global --add safe.directory /__w/twilio_dox/twilio_dox
     git add --all

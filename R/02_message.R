@@ -8,7 +8,7 @@ tw_phone_number  <- Sys.getenv("TWILIO_PHONE_NUMBER")
 tw_target_number <- Sys.getenv("TARGET_PHONE_NUMBER")
 
 url_img <- paste0(
-  "https://github.com/richpauloo/twilio_dox/raw/main/png/",
+  "https://raw.githubusercontent.com/richpauloo/twilio_dox/main/png/",
   Sys.Date(),
   ".png"
 )
