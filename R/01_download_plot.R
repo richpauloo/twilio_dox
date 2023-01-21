@@ -45,8 +45,10 @@ p <- ggplot(df, aes(t, do)) +
     caption  = caption,
     x = "", y = ""
   ) +
-  # theme_minimal() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1)) 
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    panel.grid.minor.y = element_blank()
+  ) 
 
 path_out <- paste0("png/", Sys.Date(), ".png")
 ggsave(path_out, p, height = 5, width = 7)
