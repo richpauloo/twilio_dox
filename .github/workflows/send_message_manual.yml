@@ -23,16 +23,12 @@ jobs:
         shell: Rscript {0} 
       - name: (3) setup git config
         run: |
-          # setup the username and email. I tend to use 'GitHub Actions Bot' with no email by default
-          git config user.name "GitHub Actions Bot"
-          git config user.email "<>"
-      - name: (4) Commit
-        run: |
-          # Stage the file, commit and push
+          git config --local user.email "actions@github.com"
+          git config --local user.name "GitHub Actions"
           git add --all
           git commit -m "auto update daily plot"
           git push 
-      - name: (5) Send Text Message
+      - name: (4) Send Text Message
         run: |
           source('R/01_download_plot.R')
         shell: Rscript {0} 
