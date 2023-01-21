@@ -1,0 +1,19 @@
+name: Send Text Message Manual
+
+on: workflow_dispatch
+jobs:
+  data_refresh:
+    name: send a message
+    env:
+      TWILIO_SID: ${{ secrets.TWILIO_SID }}
+      TWILIO_TOKEN: ${{ secrets.TWILIO_TOKEN }}
+      TWILIO_PHONE_NUMBER: ${{ secrets.TWILIO_PHONE_NUMBER }}
+      TARGET_PHONE_NUMBER: ${{ secrets.TARGET_PHONE_NUMBER }}
+    runs-on: ubuntu-18.04
+    container:
+     image: docker.io/richpauloo/tdox:prod.0.0.01
+    steps:
+      - name: checkout_repo
+        uses: actions/checkout@v2
+      - name: Run workflow
+        run: bash ./R/run.sh  
