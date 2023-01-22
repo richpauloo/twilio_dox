@@ -8,6 +8,7 @@ tw_phone_number   <- Sys.getenv("TWILIO_PHONE_NUMBER")
 tw_target_number  <- Sys.getenv("TARGET_PHONE_NUMBER")
 tw_target_number2 <- Sys.getenv("TARGET_PHONE_NUMBER2")
 tw_target_number3 <- Sys.getenv("TARGET_PHONE_NUMBER3")
+tw_target_number4 <- Sys.getenv("TARGET_PHONE_NUMBER4")
 
 nums <- c(tw_target_number, tw_target_number2, tw_target_number3)
 

@@ -13,6 +13,7 @@ jobs:
       TARGET_PHONE_NUMBER: ${{ secrets.TARGET_PHONE_NUMBER }}
       TARGET_PHONE_NUMBER2: ${{ secrets.TARGET_PHONE_NUMBER2 }}
       TARGET_PHONE_NUMBER3: ${{ secrets.TARGET_PHONE_NUMBER3 }}
+      TARGET_PHONE_NUMBER4: ${{ secrets.TARGET_PHONE_NUMBER4 }}
     runs-on: ubuntu-latest
     container:
      image: docker.io/richpauloo/tdox:prod.0.0.01
