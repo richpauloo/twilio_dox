@@ -29,6 +29,7 @@ cat("Downloaded", nrow(df), "rows of data.\n")
 
 # stash for later
 write.csv(df, paste0("png/", Sys.Date(), ".csv"))
+cat("Wrote csv.\n")
 
 # caption for ggplot
 caption <- paste(
