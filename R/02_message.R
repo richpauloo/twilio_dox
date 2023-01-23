@@ -10,7 +10,7 @@ tw_target_number2 <- Sys.getenv("TARGET_PHONE_NUMBER2")
 tw_target_number3 <- Sys.getenv("TARGET_PHONE_NUMBER3")
 tw_target_number4 <- Sys.getenv("TARGET_PHONE_NUMBER4")
 
-nums <- c(tw_target_number, tw_target_number2, tw_target_number3)
+nums <- c(tw_target_number, tw_target_number2, tw_target_number3, tw_target_number4)
 
 url_img <- paste0(
   "https://raw.githubusercontent.com/richpauloo/twilio_dox/main/png/",
