@@ -35,18 +35,43 @@ caption <- paste(
 )
 
 # plot and save to GH path, then commit changes
-p <- ggplot(df, aes(t, do)) +
-  geom_point(alpha = 0.2, color = "blue") + 
-  geom_line(alpha = 0.7) +
+p <- ggplot() +
+  geom_rect(
+    data = data.frame(x1 = min(df$t), x2 = max(df$t), 
+                      y1 = 0, y2 = 4),
+    aes(xmin = x1, xmax = x2, ymin = y1, ymax = y2), 
+    fill = "pink", alpha = 0.5
+  ) +
+  geom_rect(
+    data = data.frame(x1 = min(df$t), x2 = max(df$t), 
+                      y1 = 4, y2 = 6.5),
+    aes(xmin = x1, xmax = x2, ymin = y1, ymax = y2), 
+    fill = "#F1EB9C", alpha = 0.5
+  ) +
+  geom_rect(
+    data = data.frame(x1 = min(df$t), x2 = max(df$t), 
+                      y1 = 6.5, y2 = max(df$do, na.rm = TRUE)),
+    aes(xmin = x1, xmax = x2, ymin = y1, ymax = y2), 
+    fill = "#90EE90", alpha = 0.5
+  ) +
+  geom_point(
+    data = df, aes(t, do),
+    alpha = 0.3, color = "blue"
+    ) + 
+  geom_line(
+    data = df, aes(t, do),
+    alpha = 0.7
+  ) +
   scale_x_datetime(date_breaks = "4 hours", date_labels = "%a %I%p") +
   labs(
     title    = "Dissolved Oxygen Content (mg/L)",
-    subtitle = "Yolo Bypass at Lisbon",
+    subtitle = "Yolo Bypass at Lisbon, last 72 hours",
     caption  = caption,
     x = "", y = ""
   ) +
+  coord_cartesian(expand = 0) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) 
-
+p
 path_out <- paste0("png/", Sys.Date(), ".png")
 ggsave(path_out, p, height = 5, width = 7)
 cat("Saved plot to", path_out, "\n")
