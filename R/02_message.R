@@ -10,13 +10,17 @@ tw_target_number  <- Sys.getenv("TARGET_PHONE_NUMBER")
 # tw_target_number3 <- Sys.getenv("TARGET_PHONE_NUMBER3")
 # tw_target_number4 <- Sys.getenv("TARGET_PHONE_NUMBER4")
 
-nums <- c(tw_target_number)#, tw_target_number2, tw_target_number3, tw_target_number4)
+nums <- c(tw_target_number)#), tw_target_number2, tw_target_number3, tw_target_number4)
 
+# PNG plot img url from github (does this work with private repo?)
 url_img <- paste0(
   "https://raw.githubusercontent.com/richpauloo/twilio_dox/main/png/",
   Sys.Date(),
   ".png"
 )
+
+# read stashed df
+df <- read.csv(paste0("png/", Sys.Date(), ".csv"))
 
 # minimum dissovled oxygen (mg/L)
 min_do <- min(df$do, na.rm = TRUE)

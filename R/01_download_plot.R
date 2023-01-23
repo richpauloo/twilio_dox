@@ -27,6 +27,8 @@ df <- read_html(url) %>%
   mutate(t = mdy_hm(t), do = as.numeric(do)) 
 cat("Downloaded", nrow(df), "rows of data.\n")
 
+# stash for later
+write.csv(df, paste0("png/", Sys.Date(), ".csv"))
 
 # caption for ggplot
 caption <- paste(
