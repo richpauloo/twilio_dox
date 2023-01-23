@@ -27,7 +27,7 @@ min_do <- min(df$do, na.rm = TRUE)
 
 # determine high/med/low message and construct text 
 msg_high <- paste(
-  "U+1F7E2 U+1F41F HIGH minimum dissolved oxygen:",
+  "U+1F7E2", "HIGH minimum dissolved oxygen:",
   min_do, "mg/L."
 )
 
