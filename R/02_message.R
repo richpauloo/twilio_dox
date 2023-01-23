@@ -20,7 +20,7 @@ url_img <- paste0(
 )
 
 # read stashed df
-df <- read.csv(paste0("png/", Sys.Date(), ".csv"))
+df <- read.csv(paste0("csv/", Sys.Date(), ".csv"))
 
 # minimum dissovled oxygen (mg/L)
 min_do <- min(df$do, na.rm = TRUE)

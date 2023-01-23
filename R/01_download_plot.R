@@ -28,7 +28,9 @@ df <- read_html(url) %>%
 cat("Downloaded", nrow(df), "rows of data.\n")
 
 # stash for later
-write.csv(df, paste0("png/", Sys.Date(), ".csv"))
+unlink("csv", recursive = TRUE)
+dir.create("csv")
+write.csv(df, paste0("csv/", Sys.Date(), ".csv"))
 cat("Wrote csv.\n")
 
 # caption for ggplot
