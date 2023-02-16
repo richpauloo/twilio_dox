@@ -5,12 +5,13 @@ library(twilio)
 tw_sid            <- Sys.getenv("TWILIO_SID")
 tw_tok            <- Sys.getenv("TWILIO_TOKEN")
 tw_phone_number   <- Sys.getenv("TWILIO_PHONE_NUMBER")
-tw_target_number  <- Sys.getenv("TARGET_PHONE_NUMBER")
-tw_target_number2 <- Sys.getenv("TARGET_PHONE_NUMBER2")
-tw_target_number3 <- Sys.getenv("TARGET_PHONE_NUMBER3")
-tw_target_number4 <- Sys.getenv("TARGET_PHONE_NUMBER4")
 
-nums <- c(tw_target_number, tw_target_number2, tw_target_number3, tw_target_number4)
+# capture numbers which follow the env var convention
+# PHONE_NUMBER_{initials}, input as Github secrets
+env_vars <- names(Sys.getenv())
+num_ids  <- env_vars[grep("PHONE_NUMBER_", env_vars)]
+nums     <- unlist(lapply(num_ids, Sys.getenv))
+cat(length(nums), "phone numbers found.\n")
 
 # PNG plot img url from github (does this work with private repo?)
 url_img <- paste0(
@@ -51,14 +52,18 @@ if(min_do < 4) {
   msg = msg_low
 } 
 
-# text the plot to the phone number 
-for(i in 1:length(nums)){
+# text the plot to the phone number, and report initials 
+# of who the text is sent to. All env vars start the same, so 
+# extract initials by removing "PHONE_NUMBER_"
+initials <- substr(env_vars, 14, 100)
+
+for(i in seq_along(nums)){
+  cat("Preparing to text phone number", initials[i], "...")
   tw_send_message(
     from      = tw_phone_number, 
     to        = nums[i],
     body      = msg,
     media_url = url_img
   )
+  cat(" sent.\n")
 }
-
-cat("Sent plot via text message\n")

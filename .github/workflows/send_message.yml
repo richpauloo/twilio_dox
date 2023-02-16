@@ -10,10 +10,10 @@ jobs:
       TWILIO_SID: ${{ secrets.TWILIO_SID }}
       TWILIO_TOKEN: ${{ secrets.TWILIO_TOKEN }}
       TWILIO_PHONE_NUMBER: ${{ secrets.TWILIO_PHONE_NUMBER }}
-      TARGET_PHONE_NUMBER: ${{ secrets.TARGET_PHONE_NUMBER }}
-      TARGET_PHONE_NUMBER2: ${{ secrets.TARGET_PHONE_NUMBER2 }}
-      TARGET_PHONE_NUMBER3: ${{ secrets.TARGET_PHONE_NUMBER3 }}
-      TARGET_PHONE_NUMBER4: ${{ secrets.TARGET_PHONE_NUMBER4 }}
+      PHONE_NUMBER_RP: ${{ secrets.PHONE_NUMBER_RP }}
+      PHONE_NUMBER_MS: ${{ secrets.PHONE_NUMBER_MS }}
+      PHONE_NUMBER_CS: ${{ secrets.PHONE_NUMBER_CS }}
+      PHONE_NUMBER_AA: ${{ secrets.PHONE_NUMBER_AA }}
     runs-on: ubuntu-latest
     container:
      image: docker.io/richpauloo/tdox:prod.0.0.01
