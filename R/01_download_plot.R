@@ -10,7 +10,7 @@ cat("Running query for", as.character(today), "and 72 hrs prior.\n")
 # url prefix and suffix - works for this simple, single endpoint use case
 # hard codes the sensor number (61) and duration (96 hrs)
 prefix <- "http://cdec4gov.water.ca.gov/dynamicapp/selectQuery?Stations=LIS&SensorNums=61&dur_code=E&End="
-suffix <- "&span=96hours"
+suffix <- "&span=168hours"
 
 # URL query to pass to CDEC
 url <- paste(prefix, today, suffix, sep = "")
@@ -28,10 +28,9 @@ df <- read_html(url) %>%
 cat("Downloaded", nrow(df), "rows of data.\n")
 
 # stash for later
-unlink("csv", recursive = TRUE)
-dir.create("csv")
-write.csv(df, paste0("csv/", Sys.Date(), ".csv"))
-cat("Wrote csv.\n")
+path_out_csv <- paste0("csv/", Sys.Date(), ".csv")
+write.csv(df, path_out_csv)
+cat("Wrote csv to", path_out_csv, "\n")
 
 # caption for ggplot
 caption <- paste(
@@ -55,7 +54,7 @@ p <- ggplot() +
   ) +
   geom_rect(
     data = data.frame(x1 = min(df$t), x2 = max(df$t), 
-                      y1 = 6.5, y2 = max(df$do, na.rm = TRUE)),
+                      y1 = 6.5, y2 = max(df$do, na.rm = TRUE) + 0.5),
     aes(xmin = x1, xmax = x2, ymin = y1, ymax = y2), 
     fill = "#90EE90", alpha = 0.5
   ) +
@@ -67,10 +66,11 @@ p <- ggplot() +
     data = df, aes(t, do),
     alpha = 0.7
   ) +
-  scale_x_datetime(date_breaks = "4 hours", date_labels = "%a %I%p") +
+  scale_x_datetime(date_breaks = "12 hours", date_labels = "%a %I%p") +
   labs(
     title    = "Dissolved Oxygen Content (mg/L)",
-    subtitle = "Yolo Bypass at Lisbon, last 72 hours",
+    # swap this a csv lookup key when more sites are added
+    subtitle = "Yolo Bypass at Lisbon, last 7 days",
     caption  = caption,
     x = "", y = ""
   ) +
@@ -91,6 +91,19 @@ if (nrow(filter(df, !is.na(do))) == 0) {
     labs(caption = caption)
 }
 
-path_out <- paste0("png/", Sys.Date(), ".png")
-ggsave(path_out, p, height = 5, width = 7)
-cat("Saved plot to", path_out, "\n")
+path_out_png <- paste0("png/", Sys.Date(), ".png")
+ggsave(path_out_png, p, height = 5, width = 7)
+cat("Wrote plot to", path_out_png, "\n")
+
+# remove csv/png files older than 30 days
+date_cutoff <- today - 30
+
+# files in repo
+files_csv <- list.files("csv", full.names = TRUE)
+files_png <- list.files("png", full.names = TRUE)
+
+# remove files before the cutoff date 
+rm_csv <- as.Date(substr(files_csv, 5, 14)) < date_cutoff
+rm_png <- as.Date(substr(files_png, 5, 14)) < date_cutoff
+file.remove(c(files_csv[rm_csv], files_png[rm_png]))
+cat("Removed csv and png files older than", as.character(date_cutoff), "\n")
