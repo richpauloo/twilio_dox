@@ -5,7 +5,7 @@ library(dplyr)
 
 # tomorrow's date for the API query
 today <- Sys.Date() + 1
-cat("Running query for", today, "and 72 hrs prior.\n")
+cat("Running query for", as.character(today), "and 72 hrs prior.\n")
 
 # url prefix and suffix - works for this simple, single endpoint use case
 # hard codes the sensor number (61) and duration (96 hrs)
@@ -23,7 +23,7 @@ df <- read_html(url) %>%
   .[[1]] %>% 
   select(1:2) %>% 
   setNames(c("t", "do")) %>% 
-  filter(do != "--") %>% 
+  mutate(do = ifelse(do == "--", NA, do)) %>% 
   mutate(t = mdy_hm(t), do = as.numeric(do)) 
 cat("Downloaded", nrow(df), "rows of data.\n")
 
@@ -76,7 +76,21 @@ p <- ggplot() +
   ) +
   coord_cartesian(expand = 0) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) 
-p
+
+# case when DO is all NA - ensure plot indicates problem with sensor
+df_na <- data.frame(
+  x = 0:2, y = 0:2, 
+  text = c(NA, "Sensor reported missing data.", NA)
+)
+
+if (nrow(filter(df, !is.na(do))) == 0) {
+  p <- df_na %>% 
+    ggplot() +
+    geom_text(aes(x, y, label = text), size = 10) +
+    theme_void() +
+    labs(caption = caption)
+}
+
 path_out <- paste0("png/", Sys.Date(), ".png")
 ggsave(path_out, p, height = 5, width = 7)
 cat("Saved plot to", path_out, "\n")
