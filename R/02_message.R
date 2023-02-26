@@ -17,6 +17,11 @@ f_generate_message <- function(min_do) {
     msg = paste("\U0001F534 \U0001F41F LOW minimum dissolved oxygen:",
                 min_do, "mg/L.")
   }
+  # we remove NA DO before passing to this function. if all DO is NA,
+  # the plot will say there is no sensor data -- make msg reflect this
+  if (is.infinite(min_do)) {
+    msg = "\U000274C Sensor reported missing data."
+  }
   return(msg)
 }
 
