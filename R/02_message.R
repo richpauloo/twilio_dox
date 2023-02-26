@@ -42,6 +42,9 @@ msg_low <- paste(
   min_do, "mg/L."
 )
 
+msg_na <- "\U000274C Sensor reported missing data."
+
+
 if(min_do >= 6.5) {
   msg = msg_high
 } 
@@ -51,6 +54,9 @@ if(min_do < 6.5 & min_do >= 4) {
 if(min_do < 4) {
   msg = msg_low
 } 
+if(is.infinite(min_do)) {
+  msg = msg_na
+}
 
 # text the plot to the phone number, and report initials 
 # of who the text is sent to. All env vars start the same, so 
