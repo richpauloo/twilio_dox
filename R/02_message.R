@@ -87,4 +87,5 @@ if (day_of_week == "Mon") {
   f_send_message(msg_7_day)
 }
 
-cat("Completed at", Sys.time(), "\n")
+cat("Day of week detected:", day_of_week, "\n")
+cat("Completed at", as.character(Sys.time()), "\n")
