@@ -86,3 +86,5 @@ day_of_week <- wday(Sys.Date(), label = TRUE)
 if (day_of_week == "Mon") {
   f_send_message(msg_7_day)
 }
+
+cat("Completed at", Sys.time(), "\n")
