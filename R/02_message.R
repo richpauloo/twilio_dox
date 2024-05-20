@@ -83,6 +83,7 @@ if (min_do_1_day < 4) {
 # trigger 7-day alert every Monday
 day_of_week <- as.character(wday(Sys.Date(), label = TRUE))
 
+# If the 1 day DO is < 4, the message is already sent, so avoid dupe msg.
 if (day_of_week == "Mon" & min_do_1_day >= 4) {
   f_send_message(msg_7_day)
 }
