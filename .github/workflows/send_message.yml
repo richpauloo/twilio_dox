@@ -12,6 +12,7 @@ jobs:
       TWILIO_PHONE_NUMBER: ${{ secrets.TWILIO_PHONE_NUMBER }}
       PHONE_NUMBER_RP: ${{ secrets.PHONE_NUMBER_RP }}
       PHONE_NUMBER_MS: ${{ secrets.PHONE_NUMBER_MS }}
+      PHONE_NUMBER_MS2: ${{ secrets.PHONE_NUMBER_MS2 }}
     runs-on: ubuntu-latest
     container:
      image: docker.io/richpauloo/tdox:prod.0.0.01
