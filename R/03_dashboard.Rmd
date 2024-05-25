@@ -1,0 +1,220 @@
+---
+title: "Yolo Bypass at Lisbon"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: rows
+    theme: bootstrap # yeti
+    css: "../etc/style.css"
+    logo: "../etc/logo.svg"
+    favicon: "../etc/icon.png"
+    # navbar:
+    #   - {title: "Watergrid", href: "https://watergrid.io/", target: "_blank", position: "right"}
+---
+
+<script>
+$('.navbar-logo').wrap('<a href="https://www.watergrid.io" target="_blank">');
+</script>
+
+```{r setup, include=FALSE}
+library(plotly)
+library(tidyverse)
+library(flexdashboard)
+library(xts)
+library(highcharter)
+library(fontawesome)
+
+# current time
+ymd_hms_now <- Sys.time() %>% 
+  with_tz(tzone = "America/Los_Angeles") %>% 
+  format("%Y-%m-%d %H:%M:%S")
+
+# read data
+file_in <- paste0("../csv/", Sys.Date(), ".csv")
+d <- read_csv(file_in) %>% select(-1)
+
+# Daily dataframe for summary stats.
+max_time <- max(d$t, na.rm = TRUE)
+one_day_ago <- max_time - lubridate::days(1)
+dss <- filter(d, t >= one_day_ago)
+
+# quality summary stats
+min_do  <- min(dss$do_mg_l, na.rm = TRUE)
+max_trb <- max(dss$trb_fnu, na.rm = TRUE)
+max_cp  <- max(dss$cp_ug_l, na.rm = TRUE)
+
+# physical summary stats
+min_h <- min(dss$h_ft,   na.rm = TRUE)
+min_v <- min(dss$v_ft_s, na.rm = TRUE)
+max_t <- min(dss$t_f,    na.rm = TRUE)
+
+# make xts/zoo objs
+xts_do  <- xts(d$do_mg_l, order.by = d$t)
+xts_trb <- xts(d$trb_fnu, order.by = d$t)
+xts_cp  <- xts(d$cp_ug_l, order.by = d$t)
+xts_h   <- xts(d$h_ft,    order.by = d$t)
+xts_v   <- xts(d$v_ft_s,  order.by = d$t)
+xts_t   <- xts(d$t_f,     order.by = d$t)
+
+# set thousands place for highcharts
+hcoptslang <- getOption("highcharter.lang")
+hcoptslang$thousandsSep <- ","
+options(highcharter.lang = hcoptslang)
+
+# pal
+# pal <- rcartocolor::carto_pal(12, "Bold")
+pal_1 <- "#7F3C8D"
+pal_2 <- "#F2B701"
+pal_3 <- "#11A579"
+
+# colors
+col_good <- "#cce5fe"
+col_bad  <- "#f8d7d9"
+
+# value boxes - quality
+# icons: https://ionic.io/ionicons/v2
+box_min_do <- valueBox(
+  min_do, icon = "ion-ios-flask-outline", 
+  color = ifelse(min_do >= 4, col_good, col_bad),
+  caption = "Daily Minimum Dissolved Oxygen (mg/L)"
+)
+box_max_trb <- valueBox(
+  max_trb, icon = "ion-ios-keypad-outline", 
+  color = col_good,
+  caption = "Daily Maximum Turbidity (FNU)"
+)
+box_max_cp <- valueBox(
+  max_cp, icon = "ion-load-d", 
+  color = col_bad,
+  caption = "Daily Maximum Chlorophyll (ug/L)"
+)
+
+# value boxes - physical
+box_min_h <- valueBox(
+  min_h, icon = "ion-ios-analytics-outline", 
+  color = col_good,
+  caption = "Daily Minimum Stage (ft)"
+)
+box_min_v <- valueBox(
+  min_v, icon = "ion-ios-arrow-thin-right", 
+  color = col_good,
+  caption = "Daily Minimum Velocoty (ft/s)"
+)
+box_max_t <- valueBox(
+  max_t, icon = "ion-thermometer", 
+  color = col_bad,
+  caption = "Daily Maximum Temperature (F)"
+)
+```
+
+
+Biochem
+=======================================================================
+
+Row
+-----------------------------------------------------------------------
+
+### Minimum Dissolved Oxygen (mg/L) {.value-box}
+
+```{r}
+box_min_do
+```
+
+### Maximum Turbidity (FNU) {.value-box}
+
+```{r}
+box_max_trb
+```
+
+### Maximum Chlorophyll (ug/L) {.value-box}
+
+```{r}
+box_max_cp
+```
+
+Row
+-----------------------------------------------------------------------
+
+### **CDEC sensor** data last updated `r ymd_hms_now`
+
+```{r}
+highchart(type = "stock") %>% 
+  hc_yAxis_multiples(
+    create_yaxis(3, height = c(1, 1, 1), turnopposite = TRUE)
+  ) %>% 
+  hc_add_series(
+    xts_do, yAxis = 0, 
+    name = "Dissolved Oxygen (mg/L)", 
+    type = "line", color = pal_1
+  ) %>% 
+  hc_add_series(
+    xts_trb, yAxis = 1, 
+    name = "Turbidity (FNU)",
+    type = "line", color = pal_2
+  ) %>% 
+  hc_add_series(
+    xts_cp, yAxis = 2, 
+    name = "Chlorophyll (ug/L)",
+    type = "line", color = pal_3
+  ) %>%
+  hc_tooltip(valueDecimals = 2) %>% 
+  hc_size(height = 800)
+```
+
+
+Physical
+=======================================================================
+
+Row
+-----------------------------------------------------------------------
+
+### Minimum Stage (ft) {.value-box}
+
+```{r}
+box_min_h
+```
+
+### Minimum Velocity (ft/s) {.value-box}
+
+```{r}
+box_min_v
+```
+
+### Maximum Temperature (F) {.value-box}
+
+```{r}
+box_max_t
+```
+
+
+
+Row
+-----------------------------------------------------------------------
+
+
+### **CDEC sensors** data last updated `r ymd_hms_now`
+
+```{r}
+highchart(type = "stock") %>% 
+  hc_yAxis_multiples(
+    create_yaxis(3, height = c(1, 1, 1), turnopposite = TRUE)
+  )  %>% 
+  hc_add_series(
+    xts_h, yAxis = 0, 
+    name = "Stage (ft)", 
+    type = "line", color = pal_1
+  ) %>% 
+  hc_add_series(
+    xts_v, yAxis = 1, 
+    name = "Velocity (ft/s)",
+    type = "line", color = pal_2
+  ) %>% 
+  hc_add_series(
+    xts_t, yAxis = 2, 
+    name = "Temperature (F)",
+    type = "line", color = pal_3
+  ) %>% 
+  hc_tooltip(valueDecimals = 2) %>% 
+  hc_size(height = 800)
+```
+
+
