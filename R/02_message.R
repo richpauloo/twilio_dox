@@ -4,23 +4,42 @@ library(dplyr)
 library(lubridate)
 
 # function that takes a minimum DO and returns the text msg body
-f_generate_message <- function(min_do) {
+f_generate_message <- function(min_do, interval = 1) {
   if (min_do >= 6.5) {
     msg = paste("\U0001F7E2 \U0001F41F HIGH minimum dissolved oxygen:",
-                min_do, "mg/L.")
+                min_do, "mg/L")
   }
   if (min_do < 6.5 & min_do >= 4) {
     msg = paste("\U0001F7E1 \U0001F41F MEDIUM minimum dissolved oxygen:",
-                min_do, "mg/L.")
+                min_do, "mg/L")
   }
   if (min_do < 4) {
     msg = paste("\U0001F534 \U0001F41F LOW minimum dissolved oxygen:",
-                min_do, "mg/L.")
+                min_do, "mg/L")
   }
   # we remove NA DO before passing to this function. if all DO is NA,
   # the plot will say there is no sensor data -- make msg reflect this
   if (is.infinite(min_do)) {
     msg = "\U000274C Sensor reported missing data."
+  }
+  # variations for 1 and 7 day messages
+  if(interval == 1){
+    msg =paste(
+      substr(msg, 1, 3),
+      " [Daily report]",
+      substr(msg, 5, 1e6),
+      "on", as.character(Sys.Date())
+    )
+  }
+  if(interval == 7){
+    msg = paste(
+      substr(msg, 1, 3),
+      "[Weekly report]",
+      substr(msg, 5, 1e6),
+      "for the previous 7-day period from", 
+      as.character(Sys.Date() - 7), "to", 
+      as.character(Sys.Date())
+    )
   }
   return(msg)
 }
@@ -72,8 +91,8 @@ min_do_1_day <- min(df_1_day$do, na.rm = TRUE)
 min_do_7_day <- min(df$do, na.rm = TRUE)
 
 # determine high/med/low message and construct text 
-msg_1_day <- f_generate_message(min_do_1_day)
-msg_7_day <- f_generate_message(min_do_7_day)
+msg_1_day <- f_generate_message(min_do_1_day, interval = 1)
+msg_7_day <- f_generate_message(min_do_7_day, interval = 7)
 
 # trigger 1-day alert if the 1 day min DO is below 4 mg/L
 if (min_do_1_day < 4) {
