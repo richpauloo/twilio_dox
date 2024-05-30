@@ -107,5 +107,10 @@ if (day_of_week == "Mon" & min_do_1_day >= 4) {
   f_send_message(msg_7_day)
 }
 
+# If no message was sent, alert the GH Action log.
+if (day_of_week != "Mon" & min_do_1_day >= 4) {
+  cat("Today is not a Monday, and DO >= 4, so no message was sent.\n")
+}
+
 cat("Day of week detected:", day_of_week, "\n")
 cat("Completed at", as.character(Sys.time()), "\n")
