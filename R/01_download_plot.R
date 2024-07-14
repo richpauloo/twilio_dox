@@ -5,8 +5,9 @@ library(dplyr)
 
 # tomorrow's date for the API query
 today <- Sys.Date() + 1
-cat("Running query for", as.character(today), "and 72 hrs prior.\n")
+cat("Running query for", as.character(today), "and 7 days prior.\n")
 
+<<<<<<< Updated upstream
 # https://cdec.water.ca.gov/dynamicapp/staMeta?station_id=LIS
 # url prefix and suffix - works for this simple, single endpoint use case
 # hard codes the sensor number (61) and duration (96 hrs)
@@ -14,16 +15,24 @@ cat("Running query for", as.character(today), "and 72 hrs prior.\n")
 prefix <- "http://cdec4gov.water.ca.gov/dynamicapp/selectQuery?Stations=LIS&SensorNums=1,21,25,28,61,221&dur_code=E&End="
 # suffix <- "&span=48hours"
 suffix <- "&span=8760hours"
+=======
+# url prefix and suffix
+prefix <- "https://cdec.water.ca.gov/dynamicapp/QueryF?s=LIS&d="
+suffix <- "+09:00&span=168hours"
+>>>>>>> Stashed changes
 
 # URL query to pass to CDEC
-url <- paste(prefix, today, suffix, sep = "")
+url <- paste(prefix, format(today, "%d-%b-%Y"), suffix, sep = "")
 
 # read the query, unlist the output and clean:
 # rename cols, convert t to datetime, filter blank (future) DO
-df <- read_html(url) %>% 
-  html_elements("tbody") %>% 
-  html_table() %>% 
+page <- read_html(url)
+tables <- page %>% html_nodes("table")
+
+df <- tables[3] %>% 
+  html_table(fill = TRUE) %>% 
   .[[1]] %>% 
+<<<<<<< Updated upstream
   select(1, seq(2, ncol(.), 2)) %>% 
   setNames(
     c("t",       # time
@@ -42,6 +51,15 @@ df <- read_html(url) %>%
   )
 
 rownames(df) <- NULL
+=======
+  select(`DATE / TIMEPDT`, `DIS OXY  MG/L`) %>% 
+  setNames(c("t", "do")) %>% 
+  mutate(
+    t  = mdy_hm(t),
+    do = as.numeric(do)
+  ) %>% 
+  filter(!is.na(t) & !is.na(do))
+>>>>>>> Stashed changes
 cat("Downloaded", nrow(df), "rows of data.\n")
 
 # stash for later
@@ -101,7 +119,7 @@ df_na <- data.frame(
   text = c(NA, "Sensor reported missing data.", NA)
 )
 
-if (nrow(filter(df, !is.na(do))) == 0) {
+if (nrow(df) == 0) {
   p <- df_na %>% 
     ggplot() +
     geom_text(aes(x, y, label = text), size = 10) +
