@@ -7,19 +7,10 @@ library(dplyr)
 today <- Sys.Date() + 1
 cat("Running query for", as.character(today), "and 7 days prior.\n")
 
-<<<<<<< Updated upstream
-# https://cdec.water.ca.gov/dynamicapp/staMeta?station_id=LIS
-# url prefix and suffix - works for this simple, single endpoint use case
-# hard codes the sensor number (61) and duration (96 hrs)
-# prefix <- "http://cdec4gov.water.ca.gov/dynamicapp/selectQuery?Stations=LIS&SensorNums=61&dur_code=E&End="
-prefix <- "http://cdec4gov.water.ca.gov/dynamicapp/selectQuery?Stations=LIS&SensorNums=1,21,25,28,61,221&dur_code=E&End="
-# suffix <- "&span=48hours"
-suffix <- "&span=8760hours"
-=======
-  # url prefix and suffix
-  prefix <- "https://cdec.water.ca.gov/dynamicapp/QueryF?s=LIS&d="
+
+# url prefix and suffix
+prefix <- "https://cdec.water.ca.gov/dynamicapp/QueryF?s=LIS&d="
 suffix <- "+09:00&span=168hours"
->>>>>>> Stashed changes
 
 # URL query to pass to CDEC
 url <- paste(prefix, format(today, "%d-%b-%Y"), suffix, sep = "")
@@ -32,26 +23,6 @@ tables <- page %>% html_nodes("table")
 df <- tables[3] %>% 
   html_table(fill = TRUE) %>% 
   .[[1]] %>% 
-  <<<<<<< Updated upstream
-select(1, seq(2, ncol(.), 2)) %>% 
-  setNames(
-    c("t",       # time
-      "h_ft",    # 1:   stage (ft)
-      "v_ft_s",  # 21:  velocity (ft/s)
-      "cp_ug_l", # 28:  chlorophyll (ug/L)
-      "t_f",     # 25:  temp (F)
-      "trb_fnu", # 221: turbidity (FNU)
-      "do_mg_l"  # 61:  dissolved oxygen (mg/L)
-    )
-  ) %>% 
-  mutate(
-    across(-t, ~ifelse(.x == "--", NA, .x)),
-    across(-t, ~as.numeric(.x)),
-    t = mdy_hm(t) 
-  )
-
-rownames(df) <- NULL
-=======
   select(`DATE / TIMEPDT`, `DIS OXY  MG/L`) %>% 
   setNames(c("t", "do")) %>% 
   mutate(
@@ -59,7 +30,7 @@ rownames(df) <- NULL
     do = as.numeric(do)
   ) %>% 
   filter(!is.na(t) & !is.na(do))
->>>>>>> Stashed changes
+
 cat("Downloaded", nrow(df), "rows of data.\n")
 
 # stash for later
