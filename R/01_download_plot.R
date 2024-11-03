@@ -23,7 +23,7 @@ tables <- page %>% html_nodes("table")
 df <- tables[3] %>% 
   html_table(fill = TRUE) %>% 
   .[[1]] %>% 
-  select(`DATE / TIMEPDT`, `DIS OXY  MG/L`) %>% 
+  select(`DATE / TIMEPST`, `DIS OXY  MG/L`) %>% 
   setNames(c("t", "do")) %>% 
   mutate(
     t  = mdy_hm(t),
