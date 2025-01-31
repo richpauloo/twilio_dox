@@ -20,7 +20,7 @@ url <- paste(prefix, format(today, "%d-%b-%Y"), suffix, sep = "")
 page <- read_html(url)
 tables <- page %>% html_nodes("table")
 
-df <- tables[3] %>% 
+df <- tables[4] %>% 
   html_table(fill = TRUE) %>% 
   .[[1]] %>% 
   select(`DATE / TIMEPST`, `DIS OXY  MG/L`) %>% 
