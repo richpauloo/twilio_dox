@@ -20,11 +20,16 @@ url <- paste(prefix, format(today, "%d-%b-%Y"), suffix, sep = "")
 page <- read_html(url)
 tables <- page %>% html_nodes("table")
 
-df <- tables[4] %>% 
-  html_table(fill = TRUE) %>% 
-  .[[1]] %>% 
-  select(`DATE / TIMEPST`, `DIS OXY  MG/L`) %>% 
-  setNames(c("t", "do")) %>% 
+raw <- tables[4] %>%
+  html_table(fill = TRUE) %>%
+  .[[1]]
+
+# column name changes between PST and PDT depending on time of year
+date_col <- grep("^DATE / TIME", names(raw), value = TRUE)[1]
+
+df <- raw %>%
+  select(all_of(date_col), `DIS OXY  MG/L`) %>%
+  setNames(c("t", "do")) %>%
   mutate(
     t  = mdy_hm(t),
     do = as.numeric(do)
