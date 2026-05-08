@@ -2,6 +2,7 @@ library(rvest)
 library(ggplot2)
 library(lubridate)
 library(dplyr)
+library(httr)
 
 # tomorrow's date for the API query
 today <- Sys.Date() + 1
@@ -17,7 +18,14 @@ url <- paste(prefix, format(today, "%d-%b-%Y"), suffix, sep = "")
 
 # read the query, unlist the output and clean:
 # rename cols, convert t to datetime, filter blank (future) DO
-page <- read_html(url)
+# CDEC can be slow/flaky; retry with a longer timeout than the 10s default
+resp <- RETRY(
+  "GET", url,
+  times = 5, pause_base = 2, pause_cap = 30,
+  timeout(60)
+)
+stop_for_status(resp)
+page <- read_html(content(resp, as = "text", encoding = "UTF-8"))
 tables <- page %>% html_nodes("table")
 
 raw <- tables[4] %>%
