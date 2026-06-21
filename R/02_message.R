@@ -36,22 +36,22 @@ f_generate_message <- function(min_do, interval = 1) {
       substr(msg, 1, 3),
       "[Weekly report]",
       substr(msg, 5, 1e6),
-      "for the previous 7-day period from", 
-      as.character(Sys.Date() - 7), "to", 
+      "for the previous 7-day period from",
+      as.character(Sys.Date() - 7), "to",
       as.character(Sys.Date())
     )
   }
   return(msg)
 }
 
-# function to send a text message - expects namd vars: nums, initials, 
+# function to send a text message - expects namd vars: nums, initials,
 # tw_phone_number, url_img
 f_send_message <- function(msg) {
-  # text plot to the phone number, and report initials per number 
+  # text plot to the phone number, and report initials per number
   for(i in seq_along(nums)){
     cat("Preparing to text phone number", initials[i], "...")
     tw_send_message(
-      from      = tw_phone_number, 
+      from      = tw_phone_number,
       to        = nums[i],
       body      = msg,
       media_url = url_img
@@ -85,12 +85,20 @@ url_img <- paste0(
 df <- read.csv(paste0("csv/", Sys.Date(), ".csv"))
 
 # minimum dissolved oxygen (mg/L) in the last 1 and 7 days
-cutoff_1_day <- ymd_hms(max(df$t, na.rm = TRUE)) - 86400
-df_1_day     <- filter(df, t >= cutoff_1_day)
-min_do_1_day <- min(df_1_day$do, na.rm = TRUE)
-min_do_7_day <- min(df$do, na.rm = TRUE)
+if (nrow(df) == 0 || all(is.na(df$do))) {
+  min_do_1_day <- Inf
+  min_do_7_day <- Inf
+} else {
+  df <- df %>%
+    mutate(t = ymd_hms(t))
 
-# determine high/med/low message and construct text 
+  cutoff_1_day <- max(df$t, na.rm = TRUE) - 86400
+  df_1_day     <- filter(df, t >= cutoff_1_day)
+  min_do_1_day <- min(df_1_day$do, na.rm = TRUE)
+  min_do_7_day <- min(df$do, na.rm = TRUE)
+}
+
+# determine high/med/low message and construct text
 msg_1_day <- f_generate_message(min_do_1_day, interval = 1)
 msg_7_day <- f_generate_message(min_do_7_day, interval = 7)
 
